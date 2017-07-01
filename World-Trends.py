@@ -25,7 +25,11 @@ country_data = pd.DataFrame({'CountryName': np.array(Countries_2012_Dataset), 'C
 
 merged_data = pd.merge(left=data, right=country_data, how='inner', on="CountryCode")
 
-birthAndInternet = sns.lmplot( data = data, x = 'BirthRate', y = 'InternetUsers', fit_reg = False)
+birthAndInternetByIncome = sns.lmplot( data = data, x = 'BirthRate', y = 'InternetUsers', fit_reg = False, hue = 'IncomeGroup')
+
+
+
+birthAndInternetByCountry = sns.lmplot( data = merged_data, x = 'BirthRate', y = 'InternetUsers', fit_reg = False, hue = 'CountryRegion')
 
 life_exp_data = pd.DataFrame({'CountryCode': np.array(Country_Code), 'LifeExp1960': np.array(Life_Expectancy_At_Birth_1960),'LifeExp2013': np.array(Life_Expectancy_At_Birth_2013)})
 
@@ -33,8 +37,9 @@ merged_data = pd.merge(left=merged_data, right=life_exp_data, how='inner', on='C
 
 merged_data.rename(columns = {'CountryName_x':'CountryName'}, inplace = True)
 
-lifeExp1960 = sns.lmplot( data = merged_data, x = 'BirthRate', y = 'LifeExp1960', fit_reg = False)
+lifeExp1960 = sns.lmplot( data = merged_data, x = 'BirthRate', y = 'LifeExp1960', fit_reg = False, hue = 'CountryRegion')
 
-lifeExp2013 = sns.lmplot( data = merged_data, x = 'BirthRate', y = 'LifeExp2013', fit_reg = False)
+lifeExp2013 = sns.lmplot( data = merged_data, x = 'BirthRate', y = 'LifeExp2013', fit_reg = False, hue = 'CountryRegion')
+
 
 plt.show()
