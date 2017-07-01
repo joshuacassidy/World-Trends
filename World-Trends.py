@@ -1,10 +1,13 @@
+#Import
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 
+#Import the data set
 data = pd.read_csv("Data.csv")
 
+#Rename the imported data columns
 data.columns = ['CountryName', 'CountryCode', 'BirthRate', 'InternetUsers', 'IncomeGroup']
 
 Country_Code = list (["ABW","AFG","AGO","ALB","ARE","ARG","ARM","ATG","AUS","AUT","AZE","BDI","BEL","BEN","BFA","BGD","BGR","BHR","BHS","BIH","BLR","BLZ","BOL","BRA","BRB","BRN","BTN","BWA","CAF","CAN","CHE","CHL","CHN","CIV","CMR","COG","COL","COM","CPV","CRI","CUB","CYP","CZE","DEU","DJI","DNK","DOM","DZA","ECU","EGY","ERI","ESP","EST","ETH","FIN","FJI","FRA","FSM","GAB","GBR","GEO","GHA","GIN","GMB","GNB","GNQ","GRC","GRD","GTM","GUM","GUY","HKG","HND","HRV","HTI","HUN","IDN","IND","IRL","IRN","IRQ","ISL","ITA","JAM","JOR","JPN","KAZ","KEN","KGZ","KHM","KIR","KOR","KWT","LAO","LBN","LBR","LBY","LCA","LKA","LSO","LTU","LUX","LVA","MAC","MAR","MDA","MDG","MDV","MEX","MKD","MLI","MLT","MMR","MNE","MNG","MOZ","MRT","MUS","MWI","MYS","NAM","NCL","NER","NGA","NIC","NLD","NOR","NPL","NZL","OMN","PAK","PAN","PER","PHL","PNG","POL","PRI","PRT","PRY","PYF","QAT","ROU","RUS","RWA","SAU","SDN","SEN","SGP","SLB","SLE","SLV","SOM","SSD","STP","SUR","SVK","SVN","SWE","SWZ","SYR","TCD","TGO","THA","TJK","TKM","TLS","TON","TTO","TUN","TUR","TZA","UGA","UKR","URY","USA","UZB","VCT","VEN","VIR","VNM","VUT","WSM","YEM","ZAF","COD","ZMB","ZWE"])
@@ -20,27 +23,35 @@ Codes_2012_Dataset = list (["ABW","AFG","AGO","ALB","ARE","ARG","ARM","ATG","AUS
 Regions_2012_Dataset = list (["The Americas","Asia","Africa","Europe","Middle East","The Americas","Asia","The Americas","Oceania","Europe","Asia","Africa","Europe","Africa","Africa","Asia","Europe","Middle East","The Americas","Europe","Europe","The Americas","The Americas","The Americas","The Americas","The Americas","Asia","Asia","Africa","Africa","The Americas","Europe","The Americas","Asia","Africa","Africa","Africa","The Americas","Africa","Africa","The Americas","The Americas","The Americas","Europe","Europe","Europe","Africa","Europe","The Americas","Africa","The Americas","Africa","Africa","Europe","Europe","Africa","Europe","Oceania","Europe","Oceania","Africa","Europe","Asia","Africa","Africa","Africa","Africa","Africa","Europe","The Americas","The Americas","The Americas","Oceania","The Americas","Asia","The Americas","Europe","The Americas","Europe","Asia","Asia","Europe","Middle East","Middle East","Europe","Middle East","Europe","The Americas","Middle East","Asia","Asia","Africa","Asia","Asia","Oceania","Asia","Middle East","Asia","Middle East","Africa","Africa","The Americas","Europe","Asia","Africa","Europe","Europe","Europe","Asia","Africa","Europe","Africa","Asia","The Americas","Europe","Africa","Europe","Asia","Europe","Asia","Africa","Africa","Africa","Africa","Asia","Africa","Oceania","Africa","Africa","The Americas","Europe","Europe","Asia","Oceania","Middle East","Asia","The Americas","The Americas","Asia","Oceania","Europe","The Americas","Europe","The Americas","Oceania","Middle East","Europe","Europe","Africa","Middle East","Africa","Africa","Asia","Oceania","Africa","The Americas","Africa","Europe","Africa","Africa","The Americas","Europe","Europe","Europe","Africa","Africa","Middle East","Africa","Africa","Asia","Asia","Asia","Asia","Oceania","The Americas","Africa","Europe","Africa","Africa","Europe","The Americas","The Americas","Asia","The Americas","The Americas","The Americas","Asia","Oceania","Middle East","Oceania","Middle East","Africa","Africa","Africa","Africa"])
 
 def plot():
+    # Creating a dataframe for country data
     country_Data = pd.DataFrame({'CountryName': np.array(Countries_2012_Dataset), 'CountryCode': np.array(Codes_2012_Dataset), 'CountryRegion': np.array(Regions_2012_Dataset)})
 
+    # Merging the country data and initial dataframe
     merged_Data = pd.merge(left=data, right=country_Data, how='inner', on="CountryCode")
     data_And_Hue = {'IncomeGroup':data,'CountryRegion':merged_Data}
 
+    # Plotting the BirthRate against Internet Users categorized by Income Group and Country's Region
     def birth_And_Internet_Plot(data,hue):
         sns.lmplot( data = data, x = 'BirthRate', y = 'InternetUsers', fit_reg = False, hue = hue,legend=False,size=4, aspect=2)
         plt.gcf().canvas.set_window_title('Birth Rate and Internet users by {}'.format(hue))
         plt.legend(bbox_to_anchor=(1, 1))
-
+    
+    # Looping through dictionary to get the hue and data for the graph
     for key,value in data_And_Hue.items():
         birth_And_Internet_Plot(value,key)
 
+    # Create a data frame for life expectancy
     life_Exp_Data = pd.DataFrame({'CountryCode': np.array(Country_Code), 'LifeExp1960': np.array(Life_Expectancy_At_Birth_1960),'LifeExp2013': np.array(Life_Expectancy_At_Birth_2013)})
 
+    #Merging the life expectancy data with the country data
     merged_Data = pd.merge(left=merged_Data, right=life_Exp_Data, how='inner', on='CountryCode')
 
+    # Renaming the columns country names to a neater format
     merged_Data.rename(columns = {'CountryName_x':'CountryName'}, inplace = True)
 
     lifeExp = ['LifeExp1960','LifeExp2013']
 
+    # Plotting the BirthRate against LifeExpectancy categorized by Country Region in 1960 and 2013
     def life_Exp_Plot(life):
         sns.lmplot( data = merged_Data, x = 'BirthRate', y = life, fit_reg = False, hue = 'CountryRegion',legend=False,size=4, aspect=2)
         plt.gcf().canvas.set_window_title('Birth Rate and {} by CountryRegion'.format(life))
@@ -48,6 +59,7 @@ def plot():
 
     for life in lifeExp:
         life_Exp_Plot(life)
-
+    
+    #Show the graphs
     plt.show()
 plot()
