@@ -19,31 +19,35 @@ Codes_2012_Dataset = list (["ABW","AFG","AGO","ALB","ARE","ARG","ARM","ATG","AUS
 
 Regions_2012_Dataset = list (["The Americas","Asia","Africa","Europe","Middle East","The Americas","Asia","The Americas","Oceania","Europe","Asia","Africa","Europe","Africa","Africa","Asia","Europe","Middle East","The Americas","Europe","Europe","The Americas","The Americas","The Americas","The Americas","The Americas","Asia","Asia","Africa","Africa","The Americas","Europe","The Americas","Asia","Africa","Africa","Africa","The Americas","Africa","Africa","The Americas","The Americas","The Americas","Europe","Europe","Europe","Africa","Europe","The Americas","Africa","The Americas","Africa","Africa","Europe","Europe","Africa","Europe","Oceania","Europe","Oceania","Africa","Europe","Asia","Africa","Africa","Africa","Africa","Africa","Europe","The Americas","The Americas","The Americas","Oceania","The Americas","Asia","The Americas","Europe","The Americas","Europe","Asia","Asia","Europe","Middle East","Middle East","Europe","Middle East","Europe","The Americas","Middle East","Asia","Asia","Africa","Asia","Asia","Oceania","Asia","Middle East","Asia","Middle East","Africa","Africa","The Americas","Europe","Asia","Africa","Europe","Europe","Europe","Asia","Africa","Europe","Africa","Asia","The Americas","Europe","Africa","Europe","Asia","Europe","Asia","Africa","Africa","Africa","Africa","Asia","Africa","Oceania","Africa","Africa","The Americas","Europe","Europe","Asia","Oceania","Middle East","Asia","The Americas","The Americas","Asia","Oceania","Europe","The Americas","Europe","The Americas","Oceania","Middle East","Europe","Europe","Africa","Middle East","Africa","Africa","Asia","Oceania","Africa","The Americas","Africa","Europe","Africa","Africa","The Americas","Europe","Europe","Europe","Africa","Africa","Middle East","Africa","Africa","Asia","Asia","Asia","Asia","Oceania","The Americas","Africa","Europe","Africa","Africa","Europe","The Americas","The Americas","Asia","The Americas","The Americas","The Americas","Asia","Oceania","Middle East","Oceania","Middle East","Africa","Africa","Africa","Africa"])
 
-country_Data = pd.DataFrame({'CountryName': np.array(Countries_2012_Dataset), 'CountryCode': np.array(Codes_2012_Dataset), 'CountryRegion': np.array(Regions_2012_Dataset)})
+def plot():
+    country_Data = pd.DataFrame({'CountryName': np.array(Countries_2012_Dataset), 'CountryCode': np.array(Codes_2012_Dataset), 'CountryRegion': np.array(Regions_2012_Dataset)})
 
-merged_Data = pd.merge(left=data, right=country_Data, how='inner', on="CountryCode")
-data_And_Hue = {'IncomeGroup':data,'CountryRegion':merged_Data}
+    merged_Data = pd.merge(left=data, right=country_Data, how='inner', on="CountryCode")
+    data_And_Hue = {'IncomeGroup':data,'CountryRegion':merged_Data}
 
-def birth_And_Internet_Plot(data,hue):
-    sns.lmplot( data = data, x = 'BirthRate', y = 'InternetUsers', fit_reg = False, hue = hue,legend=False,size=4, aspect=2)
-    plt.legend(bbox_to_anchor=(1, 1))
+    def birth_And_Internet_Plot(data,hue):
+        sns.lmplot( data = data, x = 'BirthRate', y = 'InternetUsers', fit_reg = False, hue = hue,legend=False,size=4, aspect=2)
+        plt.gcf().canvas.set_window_title('Birth Rate and Internet users by {}'.format(hue))
+        plt.legend(bbox_to_anchor=(1, 1))
 
-for key,value in data_And_Hue.items():
-    birth_And_Internet_Plot(value,key)
+    for key,value in data_And_Hue.items():
+        birth_And_Internet_Plot(value,key)
 
-life_Exp_Data = pd.DataFrame({'CountryCode': np.array(Country_Code), 'LifeExp1960': np.array(Life_Expectancy_At_Birth_1960),'LifeExp2013': np.array(Life_Expectancy_At_Birth_2013)})
+    life_Exp_Data = pd.DataFrame({'CountryCode': np.array(Country_Code), 'LifeExp1960': np.array(Life_Expectancy_At_Birth_1960),'LifeExp2013': np.array(Life_Expectancy_At_Birth_2013)})
 
-merged_Data = pd.merge(left=merged_Data, right=life_Exp_Data, how='inner', on='CountryCode')
+    merged_Data = pd.merge(left=merged_Data, right=life_Exp_Data, how='inner', on='CountryCode')
 
-merged_Data.rename(columns = {'CountryName_x':'CountryName'}, inplace = True)
+    merged_Data.rename(columns = {'CountryName_x':'CountryName'}, inplace = True)
 
-lifeExp = ['LifeExp1960','LifeExp2013']
+    lifeExp = ['LifeExp1960','LifeExp2013']
 
-def life_Exp_Plot(life):
-    sns.lmplot( data = merged_Data, x = 'BirthRate', y = life, fit_reg = False, hue = 'CountryRegion',legend=False,size=4, aspect=2)
-    plt.legend(bbox_to_anchor=(1, 1))
+    def life_Exp_Plot(life):
+        sns.lmplot( data = merged_Data, x = 'BirthRate', y = life, fit_reg = False, hue = 'CountryRegion',legend=False,size=4, aspect=2)
+        plt.gcf().canvas.set_window_title('Birth Rate and {} by CountryRegion'.format(life))
+        plt.legend(bbox_to_anchor=(1, 1))
 
-for life in lifeExp:
-    life_Exp_Plot(life)
+    for life in lifeExp:
+        life_Exp_Plot(life)
 
-plt.show()
+    plt.show()
+plot()
